@@ -27,7 +27,7 @@ const App = (): JSX.Element => {
   const [errorMessage, setErrorMessage] = useState("");
   const [hospitals, setHospitals] = useState([]);
 
-  const ApiKey = "AIzaSyDHqQ4CwrgtvMJJwTuRtiF3qDb4vU3KTk4";
+  const ApiKey = "api-key";
 
   useEffect(() => {
     if ("geolocation" in navigator) {
@@ -42,15 +42,15 @@ const App = (): JSX.Element => {
       setLongitude(position.coords.longitude);
     });
     setLoading(true);
-    fetchData();
-  }, [radius]);
+    fetchData(latitude,longitude);
+  }, [radius,latitude,longitude]);
 
-  const fetchData = async () => {
+  const fetchData = async (mylatitude :any,mylongitude :any) => {
     console.log(`fetching...`);
     let num_radius = Number(radius);
     // Where we're fetching data from
     const proxyurl = "https://secure-dusk-66741.herokuapp.com/";
-    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&type=hospital&radius=${num_radius}&key=${ApiKey}`; // site that doesn’t send Access-Control-*
+    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${mylatitude},${mylongitude}&type=hospital&radius=${num_radius}&key=${ApiKey}`; // site that doesn’t send Access-Control-*
     fetch(proxyurl + url) // https://cors-anywhere.herokuapp.com/https://example.com
       .then((response) => response.json())
       .then((data) => {
