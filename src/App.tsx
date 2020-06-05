@@ -10,8 +10,8 @@ export interface IHospital {
 }
 
 const App = (): JSX.Element => {
-  const [latitude, setLatitude] = useState(6.5568767999999995);
-  const [longitude, setLongitude] = useState(3.3456128);
+  const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
   const [radius, setRadius] = useState("500");
   const [loading, setLoading] = useState(false);
   const [items] = React.useState([
