@@ -8,6 +8,7 @@ export default function App() {
   const [user, setUser] = useState({});
   const [isAuthenticated, setIsAuthenticated] = useState({});
 
+  //check if the user is currently logged in or not
   const authListener = () => {
     Fire.auth().onAuthStateChanged((user: any) => {
       if (user) {

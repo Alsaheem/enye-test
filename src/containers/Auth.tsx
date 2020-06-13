@@ -13,16 +13,17 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+
+  //save user to localstorage
   const handleSaveUserToLocalStorage = (email:any) => {
     localStorage.setItem('enye_app_email', email);
   };
 
-
-
+//
   const handleSubmit = (e: any) => {
     e.preventDefault();
     setLoading(true)
-    console.log(email, password);
+    //login the user if it exists
     Fire.auth()
       .signInWithEmailAndPassword(email, password)
       .then((user: any) => {
@@ -33,23 +34,21 @@ const Auth = () => {
       .catch((error: any) => {
         console.log(error.message);
         setError(true);
-        setErrorMessage(`User with this email and password dosent exist...please register`);
+        setErrorMessage(`User with this email or password dosent exist...please register`);
         setLoading(false)
       });
   };
 
   const handleRegister = (e: any ,createUser: any) => {
     e.preventDefault();
-    console.log(email, password);
+    //register a new user
     Fire.auth()
       .createUserWithEmailAndPassword(email, password)
       .then((user: any) => {
-        console.log(user);
         handleSaveUserToLocalStorage(email)
         createUser({ variables: { email: email } });
       })
       .catch((error: any) => {
-        console.log(error.message);
         setError(true);
         setErrorMessage(`An error occoured please try again`);
       });

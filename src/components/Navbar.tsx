@@ -2,10 +2,13 @@ import React from "react";
 import Fire from "../containers/Fire";
 
 const Navbar = (props: any) => {
+
+  //get item from local storage
   const handleGetUserFromLocalStorage = () => {
     return localStorage.getItem("enye_app_email");
   };
 
+  //log out a user
   const handleLogout = () => {
     console.log(`logout`);
     Fire.auth().signOut();

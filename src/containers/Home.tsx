@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Navbar from ".././components/Navbar";
 import Loading from ".././components/Loading";
-import axios from "axios";
 import "./Home.css";
 import { Query, Mutation } from "react-apollo";
 import { CREATE_DATA_MUTATION } from "../graphql/mutations";
 import { GET_MYDATA_QUERY } from "../graphql/queries";
-import Fire from "./Fire";
 import LoaderSmall from "../components/LoaderSmall";
 
+//Hospital interface
 export interface IHospital {
   business_status: string;
   name: string;
@@ -18,6 +17,7 @@ export interface IHospital {
   user_ratings_total: number;
 }
 
+//Home
 const Home = (props: any): JSX.Element => {
   const [latitude, setLatitude] = useState(0);
   const [input, setInput] = useState("");
@@ -39,20 +39,7 @@ const Home = (props: any): JSX.Element => {
   const [errorMessage, setErrorMessage] = useState("");
   const [hospitals, setHospitals] = useState([]);
 
-  const DBurl = `https://enye-locator.firebaseio.com/`;
-
-  const addData = (category: any, radius: any) => {
-    axios
-      .post(`${DBurl}/history.json`, { category, radius })
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const ApiKey = "AIzaSyDHqQ4CwrgtvMJJwTuRtiF3qDb4vU3KTk4";
+  const ApiKey = "";
 
   useEffect(() => {
     if ("geolocation" in navigator) {
@@ -68,6 +55,7 @@ const Home = (props: any): JSX.Element => {
     });
   }, [reload]);
 
+//this is a custom function used to slugify texts with spaces
   const slugify = (string: any) => {
     return string
       .toString()
@@ -80,6 +68,7 @@ const Home = (props: any): JSX.Element => {
       .replace(/-+$/, "");
   };
 
+  //this function helps to fetch data from the google places API
   const fetchData = async (mylatitude: any, mylongitude: any) => {
     console.log(`fetching...`);
     let num_radius = Number(radius);
@@ -109,6 +98,8 @@ const Home = (props: any): JSX.Element => {
       });
   };
 
+  //this helper function helps to get currentloggedin user data from local storage
+
   const handleGetUserFromLocalStorage = () => {
     return localStorage.getItem("enye_app_email");
   };
@@ -118,6 +109,8 @@ const Home = (props: any): JSX.Element => {
     console.log(`reload`);
   };
 
+
+  //formsubmit function
   const handleNewSubmit = async (event: any, createData: any) => {
     event.preventDefault();
     setLoading(true);
@@ -130,6 +123,7 @@ const Home = (props: any): JSX.Element => {
 
   };
 
+  //load previosly searched options into the state
   const handleLoad = (category: any, radius: any) => {
     console.log(category, radius);
     setLoading(true);
