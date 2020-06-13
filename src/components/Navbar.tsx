@@ -1,49 +1,60 @@
 import React from "react";
+import Fire from "../containers/Fire";
 
-const Navbar = () => {
+const Navbar = (props: any) => {
+  const handleGetUserFromLocalStorage = () => {
+    return localStorage.getItem("enye_app_email");
+  };
+
+  const handleLogout = () => {
+    console.log(`logout`);
+    Fire.auth().signOut();
+  };
+
   return (
     <>
-      <nav className=" navbar-expand-lg navbar navbar-dark bg-primary p-3 fixed">
-        <a className="navbar-brand" href="/">
-        <img src="https://previews.123rf.com/images/putracetol/putracetol1706/putracetol170602110/80819423-medical-icon-logo-design-element.jpg" className="mr-2" alt="LoGo"  height="50px" />
-          Hospital-Locator
-        </a>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-toggle="collapse"
-          data-target="#navbarTogglerDemo02"
-          aria-controls="navbarTogglerDemo02"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon" />
-        </button>
-        <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
-          <ul className="navbar-nav ml-auto mt-2 mt-lg-0">
-            <li className="nav-item active">
-              <a
-                className="nav-link"
-                href="#"
-              >
-                History <span className="sr-only">(current)</span>
-              </a>
-            </li>
-            <li className="nav-item active">
-              <a
-                className="nav-link"
-                href="https://github.com/Alsaheem"
-                target="_blank"
-              >
-                Github <span className="sr-only">(current)</span>
-              </a>
-            </li>
-          </ul>
+      <div className="vertical-nav bg-white" id="sidebar">
+        <div className=" px-3 mb-4 bg-light">
+          <div className="media d-flex align-items-center">
+            <img
+              src="https://previews.123rf.com/images/putracetol/putracetol1706/putracetol170602110/80819423-medical-icon-logo-design-element.jpg"
+              alt="..."
+              width={65}
+              className="mr-3 rounded-circle img-thumbnail shadow-sm btn-outline-primary"
+            />
+            <div className="media-body">
+              <h4 className="m-0">Med-Locator</h4>
+
+            </div>
+          </div>
         </div>
-      </nav>
+        <p className="font-weight-bold  mb-0 badge badge-info btn-block py-3 ">
+                Welcome : {handleGetUserFromLocalStorage()}
+              </p>
+              <br/>
+              <br/>
+        <div className="">
+          <button
+            type="submit"
+            onClick={handleLogout}
+            className="btn btn-block btn-outline-danger btn-sm text-center justify-content-center"
+          >
+            Signout
+          </button>
+        </div>
+        <br/>
+        <h5 className="text-dark  text-uppercase px-3  pb-4 mb-0">
+          My History...
+        </h5>
+        <ul
+          className="list-group"
+          style={{ overflowY: "scroll", maxHeight: "800px" }}
+        >
+          {props.children}
+        </ul>
+      </div>
     </>
   );
 };
 
-
-export default Navbar
+export default Navbar;
