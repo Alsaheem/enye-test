@@ -47,16 +47,6 @@ const Home = (props: any): JSX.Element => {
 
   const DBurl = `https://enye-locator.firebaseio.com/`;
 
-  const addData = (category: any, radius: any) => {
-    axios
-      .post(`${DBurl}/history.json`, { category, radius })
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
 
   const ApiKey = "xxxxxxxxxxxxxxxxxxxxxxx";
 
