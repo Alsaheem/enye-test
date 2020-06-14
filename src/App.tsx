@@ -1,23 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createContext } from "react";
 import Fire from "../src/containers/Fire";
 import Home from "../src/containers/Home";
 import Auth from "../src/containers/Auth";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+
 import "./App.css";
+
+export const AuthContext = createContext(false);
 
 export default function App() {
   const [user, setUser] = useState({});
-  const [isAuthenticated, setIsAuthenticated] = useState({});
+  let isAuth = localStorage.getItem("enye_app_email") ? true : false;
+  const [isAuthenticated, setIsAuthenticated] = useState(isAuth);
 
-  //check if the user is currently logged in or not
   const authListener = () => {
     Fire.auth().onAuthStateChanged((user: any) => {
       if (user) {
         setUser(user);
-        setIsAuthenticated(true)
+        setIsAuthenticated(true);
       } else {
         console.log(`error getting user`);
         console.log(user);
-        setIsAuthenticated(false)
+        setIsAuthenticated(false);
       }
     });
   };
@@ -26,5 +30,14 @@ export default function App() {
     authListener();
   }, []);
 
-  return <div className="App">{isAuthenticated ? <Home /> : <Auth />}</div>;
+  return (
+    <Router>
+      <AuthContext.Provider value={isAuthenticated}>
+        <Switch>
+          <Route exact path="/" component={Auth} />
+          <Route path="/home" component={Home} />
+        </Switch>
+      </AuthContext.Provider>
+    </Router>
+  );
 }

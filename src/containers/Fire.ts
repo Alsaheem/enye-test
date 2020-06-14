@@ -1,10 +1,9 @@
 import Firebase from "firebase";
 
-let Fire: any;
-
+let Fire:any;
 // Your web app's Firebase configuration
 var firebaseConfig = {
-  apiKey: "",
+  apiKey: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
   authDomain: "test-46aa8.firebaseapp.com",
   databaseURL: "https://test-46aa8.firebaseio.com",
   projectId: "test-46aa8",
@@ -14,7 +13,6 @@ var firebaseConfig = {
   measurementId: "G-W5MWQQQ3YK"
 };
 
-//initialize the firebase app in a try catch because of errors
 try {
   Fire = Firebase.initializeApp(firebaseConfig);
 } catch (err) {

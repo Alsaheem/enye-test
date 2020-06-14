@@ -1,16 +1,25 @@
-import React from "react";
+import React, { useContext } from "react";
 import Fire from "../containers/Fire";
+import { AuthContext } from "../App";
+import { useHistory } from "react-router-dom";
 
 const Navbar = (props: any) => {
+  const isAuthenticated = useContext(AuthContext);
+  console.log(isAuthenticated);
+  const history = useHistory();
 
-  //get item from local storage
   const handleGetUserFromLocalStorage = () => {
     return localStorage.getItem("enye_app_email");
   };
 
-  //log out a user
+  const handleRemoveUserFromLocalStorage = () => {
+    return localStorage.removeItem("enye_app_email");
+  };
+
   const handleLogout = () => {
-    console.log(`logout`);
+    console.log(`logging out...`);
+    handleRemoveUserFromLocalStorage();
+    history.push("/");
     Fire.auth().signOut();
   };
 
@@ -27,15 +36,14 @@ const Navbar = (props: any) => {
             />
             <div className="media-body">
               <h4 className="m-0">Med-Locator</h4>
-
             </div>
           </div>
         </div>
         <p className="font-weight-bold  mb-0 badge badge-info btn-block py-3 ">
-                Welcome : {handleGetUserFromLocalStorage()}
-              </p>
-              <br/>
-              <br/>
+          Welcome : {handleGetUserFromLocalStorage()}
+        </p>
+        <br />
+        <br />
         <div className="">
           <button
             type="submit"
@@ -45,7 +53,7 @@ const Navbar = (props: any) => {
             Signout
           </button>
         </div>
-        <br/>
+        <br />
         <h5 className="text-dark  text-uppercase px-3  pb-4 mb-0">
           My History...
         </h5>

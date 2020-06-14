@@ -1,54 +1,70 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Fire from "./Fire";
 import { CREATE_USER_MUTATION } from "../graphql/mutations";
 import { Mutation } from "react-apollo";
 import Loading from ".././components/Loading";
-import LoaderSmall from '../components/LoaderSmall';
+import LoaderSmall from "../components/LoaderSmall";
+import { useHistory } from "react-router-dom";
+import { AuthContext } from "../App";
 
 const Auth = () => {
+  const isAuthenticated = useContext(AuthContext);
+  console.log(isAuthenticated);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showlogin, setShowlogin] = useState(true);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const history = useHistory();
 
+  useEffect(() => {
+    if (localStorage.getItem("enye_app_email")) {
+      history.push("/home");
+    }
+  }, []);
 
-  //save user to localstorage
-  const handleSaveUserToLocalStorage = (email:any) => {
-    localStorage.setItem('enye_app_email', email);
+  const handleSetUserToLocalStorage = (email:any) => {
+    return localStorage.setItem("enye_app_email",email);
   };
 
-//
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    setLoading(true)
-    //login the user if it exists
+    setLoading(true);
+    console.log(email, password);
     Fire.auth()
       .signInWithEmailAndPassword(email, password)
       .then((user: any) => {
+        handleSetUserToLocalStorage(email)
         console.log(user);
-        handleSaveUserToLocalStorage(email)
-        setLoading(false)
+        history.replace("/home");
+        setLoading(false);
       })
       .catch((error: any) => {
         console.log(error.message);
         setError(true);
-        setErrorMessage(`User with this email or password dosent exist...please register`);
-        setLoading(false)
+        setErrorMessage(
+          `User with this email and password dosent exist...please register`
+        );
+        setLoading(false);
       });
   };
 
-  const handleRegister = (e: any ,createUser: any) => {
+  const handleRegister = (e: any, createUser: any) => {
     e.preventDefault();
-    //register a new user
+    console.log(email, password);
     Fire.auth()
       .createUserWithEmailAndPassword(email, password)
       .then((user: any) => {
-        handleSaveUserToLocalStorage(email)
+        console.log(user);
+        handleSetUserToLocalStorage(email)
         createUser({ variables: { email: email } });
+        history.replace("/home");
+
       })
       .catch((error: any) => {
+        console.log(error.message);
         setError(true);
         setErrorMessage(`An error occoured please try again`);
       });
@@ -67,25 +83,22 @@ const Auth = () => {
       >
         <h2 className="text-center mt-4">{showlogin ? `Login` : `Register`}</h2>
         <div className="text-center justify-content-center">
-        <img
-              src="https://previews.123rf.com/images/putracetol/putracetol1706/putracetol170602110/80819423-medical-icon-logo-design-element.jpg"
-              alt="..."
-              width={65}
-              className=" rounded-circle img-thumbnail shadow-sm btn-outline-primary "
-            />
-            </div>
+          <img
+            src="https://previews.123rf.com/images/putracetol/putracetol1706/putracetol170602110/80819423-medical-icon-logo-design-element.jpg"
+            alt="..."
+            width={65}
+            className=" rounded-circle img-thumbnail shadow-sm btn-outline-primary "
+          />
+        </div>
         <br />
         <div className="row">
           <div className="col-md-4 offset-md-4">
-          {loading && (
-            <LoaderSmall/>
-          )}
+            {loading && <LoaderSmall />}
             {error && (
               <div className="alert alert-danger" role="alert">
                 {errorMessage}
               </div>
             )}
-
           </div>
         </div>
 
@@ -139,7 +152,7 @@ const Auth = () => {
                   ) : (
                     <>
                       <button
-                        onClick={e => handleRegister(e, createUser)}
+                        onClick={(e) => handleRegister(e, createUser)}
                         type="submit"
                         className="btn btn-success"
                       >

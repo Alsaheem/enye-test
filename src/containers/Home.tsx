@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import Navbar from ".././components/Navbar";
 import Loading from ".././components/Loading";
+import axios from "axios";
 import "./Home.css";
 import { Query, Mutation } from "react-apollo";
 import { CREATE_DATA_MUTATION } from "../graphql/mutations";
 import { GET_MYDATA_QUERY } from "../graphql/queries";
+import Fire from "./Fire";
 import LoaderSmall from "../components/LoaderSmall";
+import { AuthContext } from "../App";
+import { useHistory } from "react-router-dom";
 
-//Hospital interface
 export interface IHospital {
   business_status: string;
   name: string;
@@ -17,11 +20,14 @@ export interface IHospital {
   user_ratings_total: number;
 }
 
-//Home
 const Home = (props: any): JSX.Element => {
+  const isAuthenticated = useContext(AuthContext);
+  console.log(isAuthenticated);
+  const history = useHistory();
+
   const [latitude, setLatitude] = useState(0);
   const [input, setInput] = useState("");
-  const [history, setHistory] = useState([]);
+  const [myhistory, setHistory] = useState([]);
   const [longitude, setLongitude] = useState(0);
   const [radius, setRadius] = useState("500");
   const [loading, setLoading] = useState(false);
@@ -39,7 +45,20 @@ const Home = (props: any): JSX.Element => {
   const [errorMessage, setErrorMessage] = useState("");
   const [hospitals, setHospitals] = useState([]);
 
-  const ApiKey = "";
+  const DBurl = `https://enye-locator.firebaseio.com/`;
+
+  const addData = (category: any, radius: any) => {
+    axios
+      .post(`${DBurl}/history.json`, { category, radius })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const ApiKey = "xxxxxxxxxxxxxxxxxxxxxxx";
 
   useEffect(() => {
     if ("geolocation" in navigator) {
@@ -53,9 +72,11 @@ const Home = (props: any): JSX.Element => {
       setLatitude(position.coords.latitude);
       setLongitude(position.coords.longitude);
     });
+    if (!localStorage.getItem("enye_app_email")) {
+      history.push("/");
+    }
   }, [reload]);
 
-//this is a custom function used to slugify texts with spaces
   const slugify = (string: any) => {
     return string
       .toString()
@@ -68,7 +89,6 @@ const Home = (props: any): JSX.Element => {
       .replace(/-+$/, "");
   };
 
-  //this function helps to fetch data from the google places API
   const fetchData = async (mylatitude: any, mylongitude: any) => {
     console.log(`fetching...`);
     let num_radius = Number(radius);
@@ -98,8 +118,6 @@ const Home = (props: any): JSX.Element => {
       });
   };
 
-  //this helper function helps to get currentloggedin user data from local storage
-
   const handleGetUserFromLocalStorage = () => {
     return localStorage.getItem("enye_app_email");
   };
@@ -109,8 +127,6 @@ const Home = (props: any): JSX.Element => {
     console.log(`reload`);
   };
 
-
-  //formsubmit function
   const handleNewSubmit = async (event: any, createData: any) => {
     event.preventDefault();
     setLoading(true);
@@ -120,10 +136,8 @@ const Home = (props: any): JSX.Element => {
     await fetchData(latitude, longitude);
     await createData({ variables: { title, radius, email } });
     setLoading(false);
-
   };
 
-  //load previosly searched options into the state
   const handleLoad = (category: any, radius: any) => {
     console.log(category, radius);
     setLoading(true);
@@ -145,7 +159,6 @@ const Home = (props: any): JSX.Element => {
             {(props: any) => {
               const { loading, error, data } = props;
 
-
               if (loading) {
                 return <LoaderSmall />;
               }
@@ -154,7 +167,7 @@ const Home = (props: any): JSX.Element => {
               }
               return (
                 <div className="">
-                  {history.map((hist: any, index: any) => {
+                  {myhistory.map((hist: any, index: any) => {
                     return (
                       <li key={index} className="list-group-item ">
                         <div className="row">
@@ -263,7 +276,10 @@ const Home = (props: any): JSX.Element => {
                         </div>
                       </div>
                     </form>
-                    <small className="text-danger">Note : when you get no results , it means there isnt any result within that range </small>
+                    <small className="text-danger">
+                      Note : when you get no results , it means there isnt any
+                      result within that range{" "}
+                    </small>
                   </div>
                 );
               }}
